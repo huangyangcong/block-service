@@ -8,6 +8,8 @@ import "google/protobuf/duration.proto";
 message Bootstrap {
   Server server = 1;
   Data data = 2;
+  Trace trace = 3;
+  Registry registry = 4;
 }
 
 message Server {
@@ -38,4 +40,10 @@ message Data {
   }
   Database database = 1;
   Redis redis = 2;
+}
+message Trace {
+  string url = 1;
+}
+message Registry {
+  string url = 1;
 }

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/go-kratos/consul/registry"
+	"github.com/robfig/cron/v3"
 
 	"block-service/internal/conf"
 
@@ -31,7 +32,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, r *registry.Registry) *kratos.App {
+func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, r *registry.Registry, c *cron.Cron) *kratos.App {
 	return kratos.New(
 		kratos.Name(Name),
 		kratos.Version(Version),

@@ -9,6 +9,7 @@ import (
 	"block-service/internal/biz"
 	"block-service/internal/conf"
 	"block-service/internal/data"
+	"block-service/internal/schedule"
 	"block-service/internal/server"
 	"block-service/internal/service"
 	"github.com/go-kratos/kratos/v2"
@@ -38,7 +39,8 @@ func initApp(confServer *conf.Server, confData *conf.Data, trace *conf.Trace, re
 		cleanup()
 		return nil, nil, err
 	}
-	app := newApp(logger, httpServer, grpcServer, registryRegistry)
+	cron := schedule.NewSchedule()
+	app := newApp(logger, httpServer, grpcServer, registryRegistry, cron)
 	return app, func() {
 		cleanup()
 	}, nil

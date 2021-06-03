@@ -1,10 +1,9 @@
 package service
 
 import (
-	"context"
-
 	v1 "block-service/api/helloworld/v1"
 	"block-service/internal/biz"
+	"context"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -19,7 +18,8 @@ type GreeterService struct {
 
 // NewGreeterService new a greeter service.
 func NewGreeterService(uc *biz.GreeterUsecase, logger log.Logger) *GreeterService {
-	return &GreeterService{uc: uc, log: log.NewHelper(logger)}
+	g := &GreeterService{uc: uc, log: log.NewHelper(logger)}
+	return g
 }
 
 // SayHello implements helloworld.GreeterServer

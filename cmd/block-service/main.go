@@ -1,6 +1,7 @@
 package main
 
 import (
+	"block-service/internal/service"
 	"flag"
 	"os"
 
@@ -32,7 +33,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, r *registry.Registry, c *cron.Cron) *kratos.App {
+func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, r *registry.Registry, s *service.Services, c *cron.Cron) *kratos.App {
 	return kratos.New(
 		kratos.Name(Name),
 		kratos.Version(Version),
@@ -70,7 +71,6 @@ func main() {
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
-
 	app, cleanup, err := initApp(bc.Server, bc.Data, bc.Trace, bc.Registry, logger)
 	if err != nil {
 		panic(err)

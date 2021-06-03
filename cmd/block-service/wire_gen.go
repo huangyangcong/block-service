@@ -20,6 +20,17 @@ import (
 
 // initApp init kratos application.
 func initApp(confServer *conf.Server, confData *conf.Data, trace *conf.Trace, registry *conf.Registry, logger log.Logger) (*kratos.App, func(), error) {
+	httpServer := server.NewHTTPServer(confServer)
+	tracerProvider, err := server.NewTracerProvider(trace)
+	if err != nil {
+		return nil, nil, err
+	}
+	grpcServer := server.NewGRPCServer(tracerProvider, confServer, logger)
+	registryRegistry, err := server.NewRegister(registry)
+	if err != nil {
+		return nil, nil, err
+	}
+	handleOption := server.NewHandleOption(logger)
 	dataData, cleanup, err := data.NewData(confData, logger)
 	if err != nil {
 		return nil, nil, err
@@ -27,20 +38,9 @@ func initApp(confServer *conf.Server, confData *conf.Data, trace *conf.Trace, re
 	greeterRepo := data.NewGreeterRepo(dataData, logger)
 	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
 	greeterService := service.NewGreeterService(greeterUsecase, logger)
-	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
-	tracerProvider, err := server.NewTracerProvider(trace)
-	if err != nil {
-		cleanup()
-		return nil, nil, err
-	}
-	grpcServer := server.NewGRPCServer(tracerProvider, confServer, greeterService, logger)
-	registryRegistry, err := server.NewRegister(registry)
-	if err != nil {
-		cleanup()
-		return nil, nil, err
-	}
+	services := service.NewServices(httpServer, grpcServer, handleOption, greeterService)
 	cron := schedule.NewSchedule()
-	app := newApp(logger, httpServer, grpcServer, registryRegistry, cron)
+	app := newApp(logger, httpServer, grpcServer, registryRegistry, services, cron)
 	return app, func() {
 		cleanup()
 	}, nil

@@ -5,10 +5,9 @@ import (
 
 	"github.com/google/wire"
 	"github.com/robfig/cron/v3"
-	robfigCron "github.com/robfig/cron/v3"
 )
 
-// ProviderSet is schedule providers.
+// ProviderSet1 is schedule providers.
 var ProviderSet = wire.NewSet(NewSchedule)
 
 func NewSchedule() *cron.Cron {
@@ -17,7 +16,6 @@ func NewSchedule() *cron.Cron {
 	if err := s.Start(); err != nil {
 		panic(err)
 	}
-	s.Push("@every 1s", NewBoxPrice())
 
 	defer s.Stop()
 	return s.cronImpl
@@ -25,7 +23,7 @@ func NewSchedule() *cron.Cron {
 
 type Cron struct {
 	timeZone string
-	cronImpl *robfigCron.Cron
+	cronImpl *cron.Cron
 	jobs     map[string]func()
 }
 
@@ -54,15 +52,15 @@ func (c *Cron) init() error {
 		c.cronImpl.Stop()
 	}
 	if c.timeZone == "none" {
-		c.cronImpl = robfigCron.New()
+		c.cronImpl = cron.New()
 	} else {
 		tz, err := time.LoadLocation(c.timeZone)
 		if err != nil {
 			return err
 		}
 
-		c.cronImpl = robfigCron.New(
-			robfigCron.WithLocation(tz),
+		c.cronImpl = cron.New(
+			cron.WithLocation(tz),
 		)
 	}
 

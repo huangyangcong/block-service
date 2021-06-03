@@ -14,7 +14,7 @@ import (
 )
 
 // ProviderSet is server providers.
-var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewTracerProvider, NewRegister)
+var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewHandleOption, NewTracerProvider, NewRegister)
 
 // Get trace provider
 func NewTracerProvider(c *conf.Trace) (*tracesdk.TracerProvider, error) {

@@ -80,8 +80,5 @@ func (c *GreeterHTTPClientImpl) SayHello(ctx context.Context, in *HelloRequest, 
 
 	err = c.cc.Invoke(ctx, path, nil, &out, http1.Method("GET"), http1.PathPattern("/helloworld/{name}"))
 
-	if err != nil {
-		return
-	}
 	return
 }

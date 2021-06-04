@@ -30,7 +30,10 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, r *registry.Registry, s *service.Services) *kratos.App {
+func newApp(logger log.Logger, r *registry.Registry, s *service.Services, schedule *schedule.Schedule) *kratos.App {
+	if err := schedule.Run(); err != nil {
+		panic(err)
+	}
 	return kratos.New(
 		kratos.Name(Name),
 		kratos.Version(Version),
@@ -60,7 +63,7 @@ func main() {
 	if err := c.Load(); err != nil {
 		panic(err)
 	}
-	schedule.InitSchedule()
+
 	var bc conf.Bootstrap
 	if err := c.Scan(&bc); err != nil {
 		panic(err)

@@ -8,6 +8,7 @@ import (
 	"block-service/internal/biz"
 	"block-service/internal/conf"
 	"block-service/internal/data"
+	"block-service/internal/schedule"
 	"block-service/internal/server"
 	"block-service/internal/service"
 	"github.com/go-kratos/kratos/v2"
@@ -17,5 +18,5 @@ import (
 
 // initApp init kratos application.
 func initApp(*conf.Server, *conf.Data, *conf.Trace, *conf.Registry, log.Logger) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
+	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, schedule.ProviderSet, newApp))
 }

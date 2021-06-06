@@ -9,6 +9,7 @@ import (
 	"block-service/internal/biz"
 	"block-service/internal/conf"
 	"block-service/internal/data"
+	"block-service/internal/schedule"
 	"block-service/internal/server"
 	"block-service/internal/service"
 	"github.com/go-kratos/kratos/v2"
@@ -38,7 +39,10 @@ func initApp(confServer *conf.Server, confData *conf.Data, trace *conf.Trace, re
 	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
 	greeterService := service.NewGreeterService(greeterUsecase, logger)
 	services := service.NewServices(httpServer, grpcServer, handleOption, greeterService)
-	app := newApp(logger, registryRegistry, services)
+	cron := schedule.NewSchedule(logger)
+	boxPrice := schedule.NewBoxPrice(cron, logger)
+	routes := schedule.NewScheduleRoutes(boxPrice)
+	app := newApp(logger, registryRegistry, services, routes)
 	return app, func() {
 		cleanup()
 	}, nil

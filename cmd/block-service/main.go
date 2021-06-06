@@ -30,10 +30,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, r *registry.Registry, s *service.Services, schedule *schedule.Schedule) *kratos.App {
-	if err := schedule.Run(); err != nil {
-		panic(err)
-	}
+func newApp(logger log.Logger, r *registry.Registry, s *service.Services, c *schedule.Routes) *kratos.App {
 	return kratos.New(
 		kratos.Name(Name),
 		kratos.Version(Version),
@@ -73,7 +70,6 @@ func main() {
 		panic(err)
 	}
 	defer cleanup()
-
 	// start and wait for stop signal
 	if err := app.Run(); err != nil {
 		panic(err)

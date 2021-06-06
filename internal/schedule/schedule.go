@@ -1,60 +1,36 @@
 package schedule
 
 import (
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"github.com/robfig/cron/v3"
-	"time"
 )
 
 // ProviderSet is schedule providers.
-var ProviderSet = wire.NewSet(NewSchedule)
+var ProviderSet = wire.NewSet(NewSchedule, NewScheduleRoutes, NewBoxPrice)
 
-type Schedule struct {
-	timeZone string
-	cronImpl *cron.Cron
-	jobs     Job
-}
-type Job struct {
-	runAt string
-	cmd   func()
+type Routes struct {
 }
 
-func NewSchedule() *Schedule {
-	wire.Build(wire.Struct(new(Schedule), "jobs"))
-	return &Schedule{}
-}
-func (c *Schedule) Run() error {
-	if err := c.init(); err != nil {
-		return err
-	}
-
-	c.cronImpl.Start()
-	return nil
+func NewScheduleRoutes(price BoxPrice) *Routes {
+	return &Routes{}
 }
 
-func (c *Schedule) init() error {
-	if c.cronImpl != nil {
-		c.cronImpl.Stop()
-	}
-	if c.timeZone == "none" {
-		c.cronImpl = cron.New()
-	} else {
-		tz, err := time.LoadLocation(c.timeZone)
-		if err != nil {
-			return err
-		}
-
-		c.cronImpl = cron.New(
-			cron.WithLocation(tz),
-		)
-	}
-
-	for _, job := range c.jobs {
-		c.cronImpl.AddFunc(job.runAt, job.cmd)
-	}
-	return nil
+type Logger struct {
+	logger *log.Helper
 }
 
-func (c *Schedule) Stop() {
-	c.cronImpl.Stop()
+func (l Logger) Info(msg string, keysAndValues ...interface{}) {
+	l.logger.Infof(msg, keysAndValues...)
+}
+
+// Error logs an error condition.
+func (l Logger) Error(err error, msg string, keysAndValues ...interface{}) {
+	l.logger.Errorf(msg, keysAndValues...)
+}
+
+func NewSchedule(logger log.Logger) *cron.Cron {
+	c := cron.New(cron.WithLogger(Logger{log.NewHelper(logger)}))
+	c.Start()
+	return c
 }

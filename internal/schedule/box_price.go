@@ -5,14 +5,14 @@ import (
 	"github.com/eoscanada/eos-go"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/robfig/cron/v3"
-	"strconv"
 	"strings"
 )
 
 type Pair struct {
-	Price1CumulativeLast string `json:"price1_cumulative_last" gorm:"column:price1_cumulative_last"`
-	BlockTimeLast        string `json:"block_time_last" gorm:"column:block_time_last"`
-	Price1Last           string `json:"price1_last" gorm:"column:price1_last"`
+	Price1CumulativeLast string  `json:"price1_cumulative_last" gorm:"column:price1_cumulative_last"`
+	BlockTimeLast        string  `json:"block_time_last" gorm:"column:block_time_last"`
+	Price0Last           float64 `json:"price0_last,string" gorm:"column:price0_last"`
+	Price1Last           float64 `json:"price1_last,string" gorm:"column:price1_last"`
 	Token0               struct {
 		Symbol   string `json:"symbol" gorm:"column:symbol"`
 		Contract string `json:"contract" gorm:"column:contract"`
@@ -26,34 +26,36 @@ type Pair struct {
 	Reserve0             string `json:"reserve0" gorm:"column:reserve0"`
 	ID                   int    `json:"id" gorm:"column:id"`
 	Price0CumulativeLast int    `json:"price0_cumulative_last" gorm:"column:price0_cumulative_last"`
-	Price0Last           string `json:"price0_last" gorm:"column:price0_last"`
 }
 
 type BoxPrice struct {
 }
 
 func NewBoxPrice(c *cron.Cron, logger log.Logger) BoxPrice {
-	c.AddFunc("@every 1s", func() {
-
+	log := log.NewHelper(logger)
+	c.AddFunc("@every 3s", func() {
 		err, boxEos := getPair("194")
 		err, usdtEos := getPair("12")
 		var (
 			boxEosPrice, usdtEosPrice float64
 		)
 		if strings.HasSuffix(boxEos.Token0.Symbol, "EOS") {
-			boxEosPrice, _ = strconv.ParseFloat(boxEos.Price1Last, 64)
+			boxEosPrice = boxEos.Price1Last
 		} else {
-			boxEosPrice, _ = strconv.ParseFloat(boxEos.Price0Last, 64)
+			boxEosPrice = boxEos.Price0Last
 		}
 		if strings.HasSuffix(usdtEos.Token0.Symbol, "EOS") {
-			usdtEosPrice, _ = strconv.ParseFloat(usdtEos.Price0Last, 64)
+			usdtEosPrice = usdtEos.Price0Last
 		} else {
-			usdtEosPrice, _ = strconv.ParseFloat(usdtEos.Price1Last, 64)
+			usdtEosPrice = usdtEos.Price1Last
 		}
-
 		boxUsdtPrice := boxEosPrice * usdtEosPrice
-
-		logger.Log(log.LevelInfo, boxUsdtPrice, err)
+		if err == nil {
+			log.Infof("defibox boxUsdtPrice=%f", boxUsdtPrice)
+		} else {
+			log.Error(err)
+		}
+		//util.Get()
 	})
 	return BoxPrice{}
 }

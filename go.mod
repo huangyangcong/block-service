@@ -4,7 +4,9 @@ go 1.15
 
 require (
 	github.com/armon/go-metrics v0.3.8 // indirect
+	github.com/eoscanada/eos-go v0.9.0 // indirect
 	github.com/fatih/color v1.12.0 // indirect
+	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df // indirect
 	github.com/go-kratos/consul v0.1.0
 	github.com/go-kratos/kratos/v2 v2.0.0-rc1
 	github.com/google/wire v0.5.0
@@ -22,6 +24,7 @@ require (
 	google.golang.org/genproto v0.0.0-20210601144548-a796c710e9b6
 	google.golang.org/grpc v1.38.0
 	google.golang.org/protobuf v1.26.0
+	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )

@@ -10,14 +10,13 @@ import (
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
 	"io/ioutil"
-	"strconv"
 	"strings"
 )
 
 type (
 	EmailNotify struct {
 		SmtpS   string
-		SmtpP   int
+		SmtpP   int32
 		Fromer  string
 		Toers   []string
 		Ccers   []string
@@ -28,7 +27,7 @@ type (
 
 func NewEmailNotify(mailConf *conf.Email) *EmailNotify {
 	smtp_s_str := mailConf.Host
-	smtp_p_str := mailConf.Port
+	smtp_p := mailConf.Port
 	sender_str := mailConf.Sender
 	passwd_str := mailConf.Password
 
@@ -38,26 +37,27 @@ func NewEmailNotify(mailConf *conf.Email) *EmailNotify {
 		receivers = append(receivers, strings.TrimSpace(receiverStr))
 	}
 
-	smtp_p_int, _ := strconv.Atoi(smtp_p_str)
-
 	email := &EmailNotify{
 		SmtpS:   smtp_s_str,
-		SmtpP:   smtp_p_int,
+		SmtpP:   smtp_p,
 		Fromer:  sender_str,
-		Toers:   receivers,
 		Ccers:   []string{},
 		EUser:   strings.Split(sender_str, "@")[0],
 		Epasswd: passwd_str,
 	}
 	return email
 }
-func (en *EmailNotify) SendNotifyWithFile(title, content string) bool {
-	return en.SendNotifyWithFileAndAttach(title, content, "", "")
+func (en *EmailNotify) SendNotifyWithFile(toers, title, content string) bool {
+	return en.SendNotifyWithFileAndAttach(toers, title, content, "", "")
 }
-func (en *EmailNotify) SendNotifyWithFileAndAttach(title, content, filePath, newName string) bool {
+func (en *EmailNotify) SendNotifyWithFileAndAttach(toers, title, content, filePath, newName string) bool {
+	receivers := []string{}
+	for _, receiverStr := range strings.Split(toers, ";") {
+		receivers = append(receivers, strings.TrimSpace(receiverStr))
+	}
 	msg := gomail.NewMessage(gomail.SetCharset("utf-8"))
 	msg.SetHeader("From", en.Fromer)
-	msg.SetHeader("To", en.Toers...)
+	msg.SetHeader("To", receivers...)
 	msg.SetHeader("Subject", title)
 
 	msg.SetBody("text/html", en.renderNotify(content))
@@ -68,7 +68,7 @@ func (en *EmailNotify) SendNotifyWithFileAndAttach(title, content, filePath, new
 		msg.Attach(filePath, gomail.Rename(string(fileName)))
 	}
 
-	mailer := gomail.NewDialer(en.SmtpS, en.SmtpP, en.EUser, en.Epasswd)
+	mailer := gomail.NewDialer(en.SmtpS, int(en.SmtpP), en.EUser, en.Epasswd)
 	if err := mailer.DialAndSend(msg); err != nil {
 		fmt.Println(err.Error())
 		panic(err)

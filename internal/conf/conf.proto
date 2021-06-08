@@ -50,7 +50,7 @@ message Registry {
 }
 message Email {
   string host = 1;
-  string port = 2;
+  int32 port = 2;
   string sender = 3;
   string password = 4;
 }

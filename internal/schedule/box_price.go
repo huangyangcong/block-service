@@ -104,7 +104,7 @@ func NewBoxPrice(c *cron.Cron, m *util.EmailNotify, logger log.Logger) BoxPrice 
 		log.Info(ticker)
 
 		if ticker.Last-boxUsdtPrice > 5 {
-			m.SendNotifyWithFile("box价格监控", fmt.Sprintf("box defibox价格为：%f okex价格为：%f", boxUsdtPrice, ticker.Last))
+			m.SendNotifyWithFile("1352640897@qq.com", "box价格监控", fmt.Sprintf("box defibox价格为：%f okex价格为：%f", boxUsdtPrice, ticker.Last))
 		}
 	})
 	return BoxPrice{}

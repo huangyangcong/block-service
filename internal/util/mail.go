@@ -18,7 +18,6 @@ type (
 		SmtpS   string
 		SmtpP   int32
 		Fromer  string
-		Toers   []string
 		Ccers   []string
 		EUser   string
 		Epasswd string

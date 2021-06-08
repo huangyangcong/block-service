@@ -1,11 +1,13 @@
 package schedule
 
 import (
+	"block-service/internal/util"
 	"encoding/json"
+	"fmt"
 	"github.com/eoscanada/eos-go"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/nntaoli-project/goex"
-	okex2 "github.com/nntaoli-project/goex/okex"
+	"github.com/nntaoli-project/goex/okex"
 	"github.com/robfig/cron/v3"
 	"net/http"
 	"strings"
@@ -59,7 +61,7 @@ type marketTicket struct {
 type BoxPrice struct {
 }
 
-func NewBoxPrice(c *cron.Cron, logger log.Logger) BoxPrice {
+func NewBoxPrice(c *cron.Cron, m *util.EmailNotify, logger log.Logger) BoxPrice {
 	log := log.NewHelper(logger)
 	c.AddFunc("@every 3s", func() {
 		err, boxEos := getPair("194")
@@ -84,7 +86,7 @@ func NewBoxPrice(c *cron.Cron, logger log.Logger) BoxPrice {
 			log.Error(err)
 		}
 		// Create a Resty Client
-		var okex = okex2.NewOKEx(&goex.APIConfig{
+		var okew = okex.NewOKEx(&goex.APIConfig{
 			Endpoint:   "https://www.okex.com",
 			HttpClient: &http.Client{
 				//Transport: &http.Transport{
@@ -96,13 +98,14 @@ func NewBoxPrice(c *cron.Cron, logger log.Logger) BoxPrice {
 			ApiPassphrase: "",
 		})
 		var (
-			okexSpot = okex.OKExSpot
-			//okexSwap   = okex.OKExSwap   //永续合约实现
-			//okexFuture = okex.OKExFuture //交割合约实现
-			//okexWallet = okex.OKExWallet //资金账户（钱包）操作
+			okexSpot = okew.OKExSpot
 		)
 		ticker, err := okexSpot.GetTicker(BOX_USDT)
 		log.Info(ticker)
+
+		if ticker.Last-boxUsdtPrice > 5 {
+			m.SendNotifyWithFile("box价格监控", fmt.Sprintf("box defibox价格为：%f okex价格为：%f", boxUsdtPrice, ticker.Last))
+		}
 	})
 	return BoxPrice{}
 }

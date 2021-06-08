@@ -1,72 +1,101 @@
 package util
 
-//
-//import (
-//	"github.com/go-gomail/gomail"
-//	"github.com/google/wire"
-//	"strings"
-//)
-//
-//// ProviderSet is util providers.
-//var ProviderSet = wire.NewSet(NewEmail)
-//
-//type EmailParam struct {
-//	// ServerHost 邮箱服务器地址，如腾讯企业邮箱为smtp.exmail.qq.com
-//	ServerHost string
-//	// ServerPort 邮箱服务器端口，如腾讯企业邮箱为465
-//	ServerPort int
-//	// FromEmail　发件人邮箱地址
-//	FromEmail string
-//	// FromPasswd 发件人邮箱密码（注意，这里是明文形式），TODO：如果设置成密文？
-//	FromPasswd string
-//	// Toers 接收者邮件，如有多个，则以英文逗号(“,”)隔开，不能为空
-//	Toers string
-//	// CCers 抄送者邮件，如有多个，则以英文逗号(“,”)隔开，可以为空
-//	CCers string
-//}
-//
-//func NewEmail(ep *EmailParam) *gomail.Dialer{
-//	d := gomail.NewDialer(ep.ServerHost, ep.ServerPort, ep.FromEmail, ep.FromPasswd)
-//	return d
-//}
-//
-//// SendEmail body支持html格式字符串
-//func ()SendEmail(tos, subject, body string) {
-//	m := gomail.NewMessage()
-//	// 主题
-//	m.SetHeader("Subject", subject)
-//
-//	// 正文
-//	m.SetBody("text/html", body)
-//
-//	m := gomail.NewMessage()
-//
-//	if len(tos) == 0 {
-//		return
-//	}
-//
-//	for _, tmp := range strings.Split(tos, ",") {
-//		tos = append(tos, strings.TrimSpace(tmp))
-//	}
-//
-//	// 收件人可以有多个，故用此方式
-//	m.SetHeader("To", toers...)
-//
-//	//抄送列表
-//	if len(ep.CCers) != 0 {
-//		for _, tmp := range strings.Split(ep.CCers, ",") {
-//			toers = append(toers, strings.TrimSpace(tmp))
-//		}
-//		m.SetHeader("Cc", toers...)
-//	}
-//
-//	// 发件人
-//	// 第三个参数为发件人别名，如"李大锤"，可以为空（此时则为邮箱名称）
-//	m.SetAddressHeader("From", fromEmail, "")
-//
-//	// 发送
-//	err := d.DialAndSend(m)
-//	if err != nil {
-//		panic(err)
-//	}
-//}
+import (
+	"block-service/internal/conf"
+	"bytes"
+	"fmt"
+	"html/template"
+
+	"github.com/go-gomail/gomail"
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
+	"io/ioutil"
+	"strconv"
+	"strings"
+)
+
+type (
+	EmailNotify struct {
+		SmtpS   string
+		SmtpP   int
+		Fromer  string
+		Toers   []string
+		Ccers   []string
+		EUser   string
+		Epasswd string
+	}
+)
+
+func NewEmailNotify(mailConf *conf.Email) *EmailNotify {
+	smtp_s_str := mailConf.Host
+	smtp_p_str := mailConf.Port
+	sender_str := mailConf.Sender
+	passwd_str := mailConf.Password
+
+	receivers := []string{}
+	receiversStr := ""
+	for _, receiverStr := range strings.Split(receiversStr, ";") {
+		receivers = append(receivers, strings.TrimSpace(receiverStr))
+	}
+
+	smtp_p_int, _ := strconv.Atoi(smtp_p_str)
+
+	email := &EmailNotify{
+		SmtpS:   smtp_s_str,
+		SmtpP:   smtp_p_int,
+		Fromer:  sender_str,
+		Toers:   receivers,
+		Ccers:   []string{},
+		EUser:   strings.Split(sender_str, "@")[0],
+		Epasswd: passwd_str,
+	}
+	return email
+}
+func (en *EmailNotify) SendNotifyWithFile(title, content string) bool {
+	return en.SendNotifyWithFileAndAttach(title, content, "", "")
+}
+func (en *EmailNotify) SendNotifyWithFileAndAttach(title, content, filePath, newName string) bool {
+	msg := gomail.NewMessage(gomail.SetCharset("utf-8"))
+	msg.SetHeader("From", en.Fromer)
+	msg.SetHeader("To", en.Toers...)
+	msg.SetHeader("Subject", title)
+
+	msg.SetBody("text/html", en.renderNotify(content))
+
+	//防止中文文件名乱码
+	if filePath != "" {
+		fileName, _ := Utf8ToGbk([]byte(newName))
+		msg.Attach(filePath, gomail.Rename(string(fileName)))
+	}
+
+	mailer := gomail.NewDialer(en.SmtpS, en.SmtpP, en.EUser, en.Epasswd)
+	if err := mailer.DialAndSend(msg); err != nil {
+		fmt.Println(err.Error())
+		panic(err)
+	}
+	return true
+}
+
+func (en *EmailNotify) renderNotify(content string) string {
+	tplStr := `<html>
+				<body>
+				 {<!-- -->{.}}
+				</table>
+				</body>
+				</html>`
+
+	outBuf := &bytes.Buffer{}
+	tpl := template.New("email notify template")
+	tpl, _ = tpl.Parse(tplStr)
+	tpl.Execute(outBuf, content)
+
+	return outBuf.String()
+}
+func Utf8ToGbk(s []byte) ([]byte, error) {
+	reader := transform.NewReader(bytes.NewReader(s), simplifiedchinese.GBK.NewEncoder())
+	d, e := ioutil.ReadAll(reader)
+	if e != nil {
+		return nil, e
+	}
+	return d, nil
+}

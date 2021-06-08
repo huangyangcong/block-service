@@ -17,3 +17,8 @@ trace:
   url: http://jaeger:14268/api/traces
 registry:
   url: http://consul:8500
+email:
+  host:
+  port:
+  sender:
+  password:

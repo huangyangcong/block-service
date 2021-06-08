@@ -9,12 +9,15 @@ require (
 	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df
 	github.com/go-kratos/consul v0.1.0
 	github.com/go-kratos/kratos/v2 v2.0.0-rc1
+	github.com/go-openapi/errors v0.20.0 // indirect
+	github.com/go-resty/resty/v2 v2.6.0 // indirect
 	github.com/google/wire v0.5.0
 	github.com/gorilla/mux v1.8.0
 	github.com/hashicorp/consul/api v1.8.1
 	github.com/hashicorp/go-hclog v0.16.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.13 // indirect
+	github.com/nntaoli-project/goex v1.3.1 // indirect
 	github.com/robfig/cron/v3 v3.0.0
 	go.opentelemetry.io/otel v0.20.0
 	go.opentelemetry.io/otel/exporters/trace/jaeger v0.20.0

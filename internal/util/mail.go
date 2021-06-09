@@ -70,7 +70,6 @@ func (en *EmailNotify) SendNotifyWithFileAndAttach(toers, title, content, filePa
 	mailer := gomail.NewDialer(en.SmtpS, int(en.SmtpP), en.EUser, en.Epasswd)
 	if err := mailer.DialAndSend(msg); err != nil {
 		fmt.Println(err.Error())
-		panic(err)
 	}
 	return true
 }
@@ -78,7 +77,7 @@ func (en *EmailNotify) SendNotifyWithFileAndAttach(toers, title, content, filePa
 func (en *EmailNotify) renderNotify(content string) string {
 	tplStr := `<html>
 				<body>
-				 {<!-- -->{.}}
+				 {{.}}
 				</table>
 				</body>
 				</html>`

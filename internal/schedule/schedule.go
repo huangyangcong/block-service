@@ -30,7 +30,11 @@ func (l Logger) Error(err error, msg string, keysAndValues ...interface{}) {
 }
 
 func NewSchedule(logger log.Logger) *cron.Cron {
-	c := cron.New(cron.WithLogger(Logger{log.NewHelper(logger)}))
+	l := Logger{log.NewHelper(logger)}
+	c := cron.New(
+		cron.WithLogger(l),
+		cron.WithChain(cron.Recover(l)),
+	)
 	c.Start()
 	return c
 }

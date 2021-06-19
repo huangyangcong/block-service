@@ -2,17 +2,19 @@ package main
 
 import (
 	"block-service/internal/schedule"
-	"block-service/internal/service"
 	"flag"
 	"os"
 
 	"block-service/internal/conf"
+
 	"github.com/go-kratos/consul/registry"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/go-kratos/kratos/v2/transport/http"
 	"gopkg.in/yaml.v3"
 )
 
@@ -30,14 +32,14 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, r *registry.Registry, s *service.Services, c *schedule.Routes) *kratos.App {
+func newApp(logger log.Logger, r *registry.Registry, hs *http.Server, gs *grpc.Server, c *schedule.Routes) *kratos.App {
 	return kratos.New(
 		kratos.Name(Name),
 		kratos.Version(Version),
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
 		kratos.Registrar(r),
-		kratos.Server(s.Servers...),
+		kratos.Server(hs, gs),
 	)
 }
 

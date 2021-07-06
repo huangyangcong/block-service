@@ -1,7 +1,9 @@
 package server
 
 import (
+	v1 "block-service/api/helloworld/v1"
 	"block-service/internal/conf"
+	"block-service/internal/service"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
@@ -13,7 +15,9 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(tp *trace.TracerProvider, c *conf.Server, logger log.Logger) *grpc.Server {
+func NewGRPCServer(tp *trace.TracerProvider, c *conf.Server, logger log.Logger,
+	g *service.GreeterService,
+) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			middleware.Chain(
@@ -40,5 +44,8 @@ func NewGRPCServer(tp *trace.TracerProvider, c *conf.Server, logger log.Logger) 
 		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
+
+	v1.RegisterGreeterServer(srv, g)
+
 	return srv
 }

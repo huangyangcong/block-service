@@ -1,6 +1,7 @@
 package main
 
 import (
+	"block-service/internal/schedule"
 	"flag"
 	"os"
 
@@ -31,7 +32,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, r *registry.Registry, hs *http.Server, gs *grpc.Server) *kratos.App {
+func newApp(logger log.Logger, r *registry.Registry, hs *http.Server, gs *grpc.Server, c *schedule.Routes) *kratos.App {
 	return kratos.New(
 		kratos.Name(Name),
 		kratos.Version(Version),

@@ -2,9 +2,9 @@ package util
 
 import (
 	"context"
-
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
+	"github.com/opentracing/opentracing-go/log"
 )
 
 type SpanOption func(span opentracing.Span)
@@ -13,7 +13,7 @@ func SpanWithError(err error) SpanOption {
 	return func(span opentracing.Span) {
 		if err != nil {
 			ext.Error.Set(span, true)
-			span.LogFields(tlog.String("event", "error"), tlog.String("msg", err.Error()))
+			span.LogFields(log.String("event", "error"), log.String("msg", err.Error()))
 		}
 	}
 }

@@ -20,7 +20,7 @@ func NewGRPCServer(tp *trace.TracerProvider, c *conf.Server, logger log.Logger) 
 				recovery.Recovery(),
 				tracing.Server(
 					tracing.WithTracerProvider(tp),
-					tracing.WithPropagators(
+					tracing.WithPropagator(
 						propagation.NewCompositeTextMapPropagator(
 							propagation.Baggage{},
 							propagation.TraceContext{},

@@ -32,7 +32,7 @@ func GetSwapDefiPair(pairId string) (error, *SwapDefiPair) {
 	return err, &pairs[0]
 }
 
-//GetTableRows
+// GetTableRows
 func GetTableRows(code, scope, table, lowerBound, upperBound string, limit uint32, v interface{}) error {
 	api := eos.New("https://eospush.tokenpocket.pro")
 	resp, err := api.GetTableRows(eos.GetTableRowsRequest{

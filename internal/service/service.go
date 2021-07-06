@@ -15,10 +15,10 @@ type Services struct {
 	GreeterService *GreeterService
 }
 
-func NewServices(hs *http.Server, gs *grpc.Server, m http.HandleOption,
+func NewServices(hs *http.Server, gs *grpc.Server, m http.ServerOption,
 	g *GreeterService) *Services {
 	v1.RegisterGreeterServer(gs, g)
-	hs.HandlePrefix("/", v1.NewGreeterHandler(g, m))
+	v1.RegisterGreeterHTTPServer(hs, g)
 	return &Services{
 		GreeterService: g,
 	}

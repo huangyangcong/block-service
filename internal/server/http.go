@@ -12,7 +12,7 @@ import (
 
 // NewHTTPServer new a HTTP server.
 func NewHTTPServer(c *conf.Server) *http.Server {
-	var opts = []http.ServerOption{}
+	var opts []http.ServerOption
 	if c.Http.Network != "" {
 		opts = append(opts, http.Network(c.Http.Network))
 	}
@@ -26,8 +26,8 @@ func NewHTTPServer(c *conf.Server) *http.Server {
 	return srv
 }
 
-// NewHTTPServer new a HTTP server.
-func NewHandleOption(logger log.Logger) http.HandleOption {
+// NewHandleOption new a HTTP server.
+func NewHandleOption(logger log.Logger) http.ServerOption {
 	m := http.Middleware(
 		middleware.Chain(
 			recovery.Recovery(),

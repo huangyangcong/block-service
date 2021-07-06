@@ -12,6 +12,7 @@ require (
 	github.com/go-kratos/kratos/cmd/protoc-gen-go-errors/v2 v2.0.0-20210705034112-e9969bc65553 // indirect
 	github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2 v2.0.0-20210705034112-e9969bc65553 // indirect
 	github.com/go-kratos/kratos/v2 v2.0.0-rc7
+	github.com/google/subcommands v1.2.0 // indirect
 	github.com/google/wire v0.5.0
 	github.com/hashicorp/consul/api v1.9.1
 	github.com/iancoleman/strcase v0.1.3 // indirect

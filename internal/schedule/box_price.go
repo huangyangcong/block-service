@@ -7,7 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/nntaoli-project/goex"
 	"github.com/nntaoli-project/goex/okex"
-	"github.com/robfig/cron/v3"
 	"net/http"
 	"net/url"
 	"strings"
@@ -18,9 +17,9 @@ var BOX_USDT = goex.CurrencyPair{CurrencyA: goex.Currency{"BOX", ""}, CurrencyB:
 type BoxPrice struct {
 }
 
-func NewBoxPrice(c *cron.Cron, m *util.EmailNotify, logger log.Logger) BoxPrice {
-	log := log.NewHelper(logger)
-	c.AddFunc("@every 3s", func() {
+func NewBoxPrice(s *Server, m *util.EmailNotify) BoxPrice {
+	log := log.NewHelper(s.log)
+	s.schedule.AddFunc("@every 3s", func() {
 		err, boxEos := util.GetSwapDefiPair(models.BOX_EOS.PairId)
 		err, usdtEos := util.GetSwapDefiPair(models.USDT_EOS.PairId)
 		var (

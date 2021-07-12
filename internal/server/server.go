@@ -1,7 +1,7 @@
 package server
 
 import (
-	"block-service/internal/conf"
+	"github.com/huangyangcong/block-service/internal/conf"
 
 	"github.com/go-kratos/consul/registry"
 	"github.com/google/wire"
@@ -29,7 +29,7 @@ func NewTracerProvider(c *conf.Trace) (*tracesdk.TracerProvider, error) {
 		tracesdk.WithBatcher(exp),
 		// Record information about this application in an Resource.
 		tracesdk.WithResource(resource.NewWithAttributes(
-			semconv.ServiceNameKey.String("block-service"),
+			semconv.ServiceNameKey.String("github.com/huangyangcong/block-service"),
 			attribute.String("environment", "development"),
 			attribute.Int64("ID", 1),
 		)),

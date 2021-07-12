@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.26.0
 // 	protoc        v3.15.5
-// source: block-service/internal/conf/conf.proto
+// source: github.com/huangyangcong/block-service/internal/conf/conf.proto
 
 package conf
 

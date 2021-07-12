@@ -8,11 +8,18 @@ import (
 )
 
 // ProviderSet is schedule providers.
-var ProviderSet = wire.NewSet(NewScheduleServer, NewBoxPrice)
+var ProviderSet = wire.NewSet(NewScheduleServer, NewRouter, NewBoxPrice)
 
 type Server struct {
 	log      log.Logger
 	schedule *cron.Cron
+}
+type Router struct {
+	boxPrice BoxPrice
+}
+
+func NewRouter(price BoxPrice) *Router {
+	return &Router{price}
 }
 
 func NewScheduleServer(log log.Logger) *Server {

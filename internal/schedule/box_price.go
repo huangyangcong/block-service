@@ -1,14 +1,12 @@
 package schedule
 
 import (
-	"block-service/internal/models"
-	"block-service/internal/util"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/huangyangcong/block-service/internal/models"
+	"github.com/huangyangcong/block-service/internal/util"
 	"github.com/nntaoli-project/goex"
 	"github.com/nntaoli-project/goex/okex"
-	"net/http"
-	"net/url"
 	"strings"
 )
 
@@ -43,16 +41,6 @@ func NewBoxPrice(s *Server, m *util.EmailNotify) BoxPrice {
 		}
 		// Create a Resty Client
 		var okex = okex.NewOKEx(&goex.APIConfig{
-			Endpoint: "https://www.okex.com",
-			HttpClient: &http.Client{
-				Transport: &http.Transport{
-					Proxy: func(req *http.Request) (*url.URL, error) {
-						return &url.URL{
-							Scheme: "socks5",
-							Host:   "127.0.0.1:1080"}, nil
-					},
-				},
-			},
 			ApiKey:        "",
 			ApiSecretKey:  "",
 			ApiPassphrase: "",

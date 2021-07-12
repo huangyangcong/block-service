@@ -1,9 +1,9 @@
 package util
 
 import (
-	"block-service/internal/conf"
 	"bytes"
 	"fmt"
+	"github.com/huangyangcong/block-service/internal/conf"
 	"html/template"
 
 	"github.com/go-gomail/gomail"

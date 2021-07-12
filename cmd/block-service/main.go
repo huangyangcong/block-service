@@ -1,11 +1,11 @@
 package main
 
 import (
-	"block-service/internal/schedule"
 	"flag"
+	"github.com/huangyangcong/block-service/internal/schedule"
 	"os"
 
-	"block-service/internal/conf"
+	"github.com/huangyangcong/block-service/internal/conf"
 
 	"github.com/go-kratos/consul/registry"
 
@@ -32,7 +32,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, r *registry.Registry, hs *http.Server, gs *grpc.Server, schedule *schedule.Server) *kratos.App {
+func newApp(logger log.Logger, r *registry.Registry, hs *http.Server, gs *grpc.Server, schedule *schedule.Server, router *schedule.Router) *kratos.App {
 	return kratos.New(
 		kratos.Name(Name),
 		kratos.Version(Version),

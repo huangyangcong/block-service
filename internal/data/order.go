@@ -1,9 +1,9 @@
 package data
 
 import (
-	"block-service/internal/biz"
-	"block-service/internal/pkg/util/pagination"
 	"context"
+	"github.com/huangyangcong/block-service/internal/biz"
+	"github.com/huangyangcong/block-service/internal/pkg/util/pagination"
 	"time"
 
 	"gorm.io/gorm"

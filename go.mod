@@ -1,4 +1,4 @@
-module block-service
+module github.com/huangyangcong/block-service
 
 go 1.15
 

@@ -1,11 +1,11 @@
 package service
 
 import (
-	v1 "block-service/api/helloworld/v1"
-	"block-service/internal/biz"
 	"context"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	v1 "github.com/huangyangcong/block-service/api/helloworld/v1"
+	"github.com/huangyangcong/block-service/internal/biz"
 )
 
 // GreeterService is a greeter service.

@@ -1,9 +1,9 @@
 package data
 
 import (
-	"block-service/internal/conf"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	"github.com/huangyangcong/block-service/internal/conf"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )

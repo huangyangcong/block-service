@@ -1,15 +1,15 @@
 package server
 
 import (
-	v1 "block-service/api/helloworld/v1"
-	"block-service/internal/conf"
-	"block-service/internal/service"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	v1 "github.com/huangyangcong/block-service/api/helloworld/v1"
+	"github.com/huangyangcong/block-service/internal/conf"
+	"github.com/huangyangcong/block-service/internal/service"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/trace"
 )

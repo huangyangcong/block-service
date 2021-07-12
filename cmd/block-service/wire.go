@@ -5,16 +5,16 @@
 package main
 
 import (
-	"block-service/internal/biz"
-	"block-service/internal/conf"
-	"block-service/internal/data"
-	"block-service/internal/schedule"
-	"block-service/internal/server"
-	"block-service/internal/service"
-	"block-service/internal/util"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	"github.com/huangyangcong/block-service/internal/biz"
+	"github.com/huangyangcong/block-service/internal/conf"
+	"github.com/huangyangcong/block-service/internal/data"
+	"github.com/huangyangcong/block-service/internal/schedule"
+	"github.com/huangyangcong/block-service/internal/server"
+	"github.com/huangyangcong/block-service/internal/service"
+	"github.com/huangyangcong/block-service/internal/util"
 )
 
 // initApp init kratos application.

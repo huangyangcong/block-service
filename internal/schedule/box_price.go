@@ -7,6 +7,7 @@ import (
 	"github.com/huangyangcong/block-service/internal/util"
 	"github.com/nntaoli-project/goex"
 	"github.com/nntaoli-project/goex/okex"
+	"net/http"
 	"strings"
 )
 
@@ -41,12 +42,14 @@ func NewBoxPrice(s *Server, m *util.EmailNotify) BoxPrice {
 		}
 		// Create a Resty Client
 		var okex = okex.NewOKEx(&goex.APIConfig{
+			HttpClient:    http.DefaultClient,
 			ApiKey:        "",
 			ApiSecretKey:  "",
 			ApiPassphrase: "",
 		})
 		var okexSpot = okex.OKExSpot
 		ticker, err := okexSpot.GetTicker(BOX_USDT)
+		log.Infof("okex boxUsdtPrice=%f", ticker.Last)
 		if boxUsdtPrice-ticker.Last > 5 {
 			sr := fmt.Sprintf("box defibox价格为：%f okex价格为：%f", boxUsdtPrice, ticker.Last)
 			m.SendNotifyWithFile("xxxx", "box价格监控", sr)

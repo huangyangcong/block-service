@@ -22,8 +22,13 @@ func NewRouter(price BoxPrice) *Router {
 	return &Router{price}
 }
 
-func NewScheduleServer(log log.Logger) *Server {
-	return &Server{log: log}
+func NewScheduleServer(logger log.Logger) *Server {
+	l := Logger{log.NewHelper(logger)}
+	schedule := cron.New(
+		cron.WithLogger(l),
+		cron.WithChain(cron.Recover(l)),
+	)
+	return &Server{log: logger, schedule: schedule}
 }
 
 type Logger struct {
@@ -40,13 +45,7 @@ func (l Logger) Error(err error, msg string, keysAndValues ...interface{}) {
 }
 
 func (s Server) Start(c context.Context) error {
-	l := Logger{log.NewHelper(s.log)}
-	schedule := cron.New(
-		cron.WithLogger(l),
-		cron.WithChain(cron.Recover(l)),
-	)
-	schedule.Start()
-	s.schedule = schedule
+	s.schedule.Start()
 	return nil
 }
 func (s Server) Stop(c context.Context) error {
